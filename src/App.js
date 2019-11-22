@@ -11,10 +11,10 @@ class App extends Component {
       todos: []
     };
 
-    this.addTodo = this.addTodo.bind(this);
-    this.removeTodo = this.removeTodo.bind(this);
-    this.removeAllTodos = this.removeAllTodos.bind(this);
-    this.toggleCompleteStatus = this.toggleCompleteStatus.bind(this);
+    // this.addTodo = this.addTodo.bind(this);
+    // this.removeTodo = this.removeTodo.bind(this);
+    // this.removeAllTodos = this.removeAllTodos.bind(this);
+    // this.toggleCompleteStatus = this.toggleCompleteStatus.bind(this);
   }
 
   componentDidMount() {
@@ -29,7 +29,7 @@ class App extends Component {
     });
   }
 
-  addTodo(newTodo) {
+  addTodo = newTodo => {
     // Parametre olarak inputtan yeni eklenen değeri "newTodo" olarak alıyoruz.
     // State'i mutate etmemek için rest operatörü ile bir kopyalama yapıp yeni todoyu concat ile ekliyoruz.
     this.setState(
@@ -43,9 +43,9 @@ class App extends Component {
         window.localStorage.setItem("todos", JSON.stringify(this.state.todos));
       }
     );
-  }
+  };
 
-  removeTodo(id) {
+  removeTodo = id => {
     // Silinecek todo'nun idsini parametre olarak alıyoruz.
     // State içerisindeki todolardan filter ile bu id'yi çıkarıyoruz.
     // Mutate etmemk için filter kullandık, filter bize yeni bir array döner.
@@ -60,9 +60,9 @@ class App extends Component {
         window.localStorage.setItem("todos", JSON.stringify(this.state.todos));
       }
     );
-  }
+  };
 
-  removeAllTodos() {
+  removeAllTodos = () => {
     this.setState(
       {
         todos: []
@@ -71,9 +71,9 @@ class App extends Component {
         window.localStorage.removeItem("todos");
       }
     );
-  }
+  };
 
-  toggleCompleteStatus(id) {
+  toggleCompleteStatus = id => {
     // Map ile mevcut todolar arasında döngüye girip, değiştirmek istediğimi farklı şekilde dönüyorum.
     // Aradığım itemin checked statusunu değiştiriyorum, rest ile kopyalayarak yani mutate etmeden.
     // Diğer elemanları olduğu gibi dönüyorum, "return todo";
@@ -94,7 +94,19 @@ class App extends Component {
         window.localStorage.setItem("todos", JSON.stringify(this.state.todos));
       }
     );
-  }
+  };
+
+  getFilterdTodos = done => {
+    // console.log(this.state.todos);
+    let currentTodo;
+    let todos = this.state.todos.filter(todo => {
+      currentTodo = { ...todo };
+      if (currentTodo.checked === done) {
+        return todo;
+      }
+    });
+    return todos;
+  };
 
   render() {
     return (
@@ -106,17 +118,17 @@ class App extends Component {
             <RemoveAll onRemoveAll={this.removeAllTodos} />
           </div>
         </div>
-        <p>testTEST test</p>
+
         <TodoList
           title="Tamamlanmamış Todolar"
-          todos={[]}
+          todos={this.getFilterdTodos(false)}
           onTodoRemove={this.removeTodo}
           onCheckedToggle={this.toggleCompleteStatus}
         />
 
         <TodoList
           title="Tamamlanmış Todolar"
-          todos={[]}
+          todos={this.getFilterdTodos(true)}
           onTodoRemove={this.removeTodo}
           onCheckedToggle={this.toggleCompleteStatus}
         />
